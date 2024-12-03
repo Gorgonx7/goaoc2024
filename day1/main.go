@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"os"
 	"slices"
 	"strconv"
@@ -13,7 +12,7 @@ func main() {
 	data := readData("data.txt")
 	lines := strings.Split(data, "\n")
 	leftSide := []int{}
-	rightSide := []int{}
+	rightSide := map[int]int{}
 	for _, line := range lines {
 		parts := strings.Split(line, "   ")
 		left, err := strconv.Atoi(parts[0])
@@ -25,14 +24,16 @@ func main() {
 			panic(err)
 		}
 		leftSide = append(leftSide, left)
-		rightSide = append(rightSide, right)
+		if _, ok := rightSide[right]; !ok {
+			rightSide[right] = 1
+			continue
+		}
+		rightSide[right] = rightSide[right] + 1
 	}
 	slices.Sort(leftSide)
-	slices.Sort(rightSide)
 	totalDiff := 0
 	for i := 0; i < len(leftSide); i++ {
-		totalDiff += int(math.Abs(float64(leftSide[i]) - float64(rightSide[i])))
-
+		totalDiff += leftSide[i] * rightSide[leftSide[i]]
 	}
 	fmt.Println("Result: ", totalDiff)
 }
